@@ -105,6 +105,7 @@ submitFormButton.addEventListener('click', function() {
     dbName: document.getElementById('dbName').value,
     port: document.getElementById('port').value,
     url: document.getElementById('url').value,
+    driver: document.querySelector('input[name="dbType"]:checked').value,
   }
 
   fetch('http://localhost:8080/extract-eer', {
