@@ -55,7 +55,18 @@
               <div id="popupForm">
                 <form>
                   <h2>Extract ER Diagram From Relational Database</h2>
-                  <break>
+                  <br>
+                  <div class="input-container">
+                    <label for="dbType">Database:</label>
+                    <div>
+                      <input type="radio" id="mysql" name="dbType" value="MySQL">
+                      <label for="mysql">MySQL</label>
+                    </div>
+                    <div>
+                      <input type="radio" id="postgresql" name="dbType" value="PostgreSQL">
+                      <label for="postgresql">PostgreSQL</label>
+                    </div>
+                  </div>
                   <div class="input-container">
                     <label for="dbName">Database Name:</label>
                     <input type="text" id="dbName" name="dbName">
