@@ -17,7 +17,7 @@ const createTableInput = (cf) => {
       <select class="attribute-input" id="${cf.label}-${attr.label}">
     `;
     
-    const options = ['text', 'ascii', 'bigint', 'blob', 'boolean', 'date', 'decimal', 'double', 'int', 'float', 'timestamp', 'varchar', 'uuid', 'time'];
+    const options = ['text', 'ascii', 'bigint', 'blob', 'boolean', 'date', 'decimal', 'double','smallint', 'int', 'float', 'timestamp', 'varchar', 'uuid', 'time'];
     for (const option of options) {
       if (option === attr.dataType) {
         dataTable += `<option value="${option}" selected>${option}</option>`;

@@ -328,6 +328,8 @@ const mapDataType = (mySQLType) => {
   switch (mySQLType) {
     case 'int':
       return 'int';
+    case 'smallint':
+      return 'smallint';
     case 'bigint':
       return 'bigint';
     case 'float':
@@ -358,7 +360,7 @@ const mapDataType = (mySQLType) => {
     case 'boolean':
       return 'boolean';
     default:
-      throw new Error(`Unknown MySQL data type: ${mySQLType}`);
+      return mySQLType;
   }
 }
 
