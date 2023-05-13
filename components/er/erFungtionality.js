@@ -178,9 +178,14 @@ const convertToERModel = (ername) => {
     }
     // Attribute
     else {
+      if (ER.dataType) {
+        ER.dataType = mapDataType(ER.dataType)
+      }
+
       allAttribute.push(ER.text);
       const newAttribute = new Attribute(ER.text)
       newAttribute.id = ER.key
+      newAttribute.dataType = ER.dataType
 
       if (ER.figure == "Ring"){
         newAttribute.type = "Multivalued"
@@ -318,6 +323,45 @@ checkParentColumFam = (columnFamilies) => {
     }
   })
 }
+const mapDataType = (mySQLType) => {
+  mySQLType = mySQLType.toLowerCase();
+  switch (mySQLType) {
+    case 'int':
+      return 'int';
+    case 'bigint':
+      return 'bigint';
+    case 'float':
+      return 'float';
+    case 'double':
+      return 'double';
+    case 'decimal':
+      return 'decimal';
+    case 'char':
+    case 'varchar':
+    case 'tinytext':
+    case 'text':
+    case 'mediumtext':
+    case 'longtext':
+    case 'json':
+      return 'text';
+    case 'blob':
+    case 'mediumblob':
+    case 'longblob':
+      return 'blob';
+    case 'date':
+      return 'date';
+    case 'datetime':
+    case 'timestamp':
+      return 'timestamp';
+    case 'time':
+      return 'text';
+    case 'boolean':
+      return 'boolean';
+    default:
+      throw new Error(`Unknown MySQL data type: ${mySQLType}`);
+  }
+}
+
 
 const convertToLogical = () => {
   visited = []

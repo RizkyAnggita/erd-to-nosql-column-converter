@@ -55,9 +55,16 @@ const arrayKeysToAttribute = (keys) => {
   return arrayAttr
 }
 
-const stringifyCircularObject = (key, value) => {
-  if (key == 'fromER' || key == 'toER' || key == 'super' || key == 'parentColumnFam') { return `reference to id ${value?.id}`;}
-  else {return value;}
+const stringifyCircularObject = (key, value) => {  
+  if (key == 'fromER' || key == 'toER' || key == 'super' || key == 'parentColumnFam') { 
+    return `reference to id ${value?.id}`;
+  }
+  else if (key == 'dataType') {
+    return undefined
+  }
+  else {
+    return value;
+  }
 }
 
 const mergeLogicalCF = (logical1, logical2) => {

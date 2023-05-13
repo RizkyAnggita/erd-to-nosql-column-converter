@@ -303,6 +303,7 @@ class Attribute {
       if (attribute.type != "Derived") {
         const logicalAttr = new LogicalAttribute()
         logicalAttr.setLabel(attribute.label)
+        logicalAttr.setDataType(attribute.dataType)
         getColumnType(logicalAttr, attribute)      
         columnFamily.attributes = mergeArray([logicalAttr], columnFamily.attributes)
       }

@@ -151,4 +151,8 @@ class LogicalAttribute {
   setType(type){
     this.type = type
   }
+
+  setDataType(dataType){
+    this.dataType = dataType
+  }
 }

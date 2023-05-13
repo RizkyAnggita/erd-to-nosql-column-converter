@@ -15,23 +15,22 @@ const createTableInput = (cf) => {
     <div class="attribute-container">
       <div class="attribute-name">${attr.label}</div>
       <select class="attribute-input" id="${cf.label}-${attr.label}">
-        <option value="ascii">ascii</option>
-        <option value="bigint">bigint</option>
-        <option value="blob">blob</option>
-        <option value="boolean">boolean</option>
-        <option value="date">date</option>
-        <option value="decimal">decimal</option>
-        <option value="double">double</option>
-        <option value="int">int</option>
-        <option value="float">float</option>
-        <option value="timestamp">timestamp</option>
-        <option value="varchar">varchar</option>
-        <option value="uuid">uuid</option>
-        <option value="text" selected>text</option>
-        <option value="time">time</option>
+    `;
+    
+    const options = ['text', 'ascii', 'bigint', 'blob', 'boolean', 'date', 'decimal', 'double', 'int', 'float', 'timestamp', 'varchar', 'uuid', 'time'];
+    for (const option of options) {
+      if (option === attr.dataType) {
+        dataTable += `<option value="${option}" selected>${option}</option>`;
+      } else {
+        dataTable += `<option value="${option}">${option}</option>`;
+      }
+    }
+
+    dataTable += `
       </select>
     </div>
-    `
+    `;
+ 
   })
 
   dataTable +=`
