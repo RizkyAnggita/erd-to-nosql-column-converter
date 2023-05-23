@@ -20,6 +20,33 @@ class PhysicalCassandra {
       stringQuery.push('')
     })
 
+    this.tables.forEach((table) => {
+      stringQuery.push('')
+      stringQuery.push(`/* Insert Data for ${table.label} */`)
+      table.data.forEach((datum) => {
+        var keys = [];
+        for (var key in datum) {
+          keys.push(key)
+        }
+        
+        const keyString = keys.toString()
+        var stringTemp = ""
+        stringTemp += `INSERT INTO ${table.label} (${keyString}) VALUES(`
+        
+        keys.forEach((key, index) => {
+          if (index !== keys.length-1 ) {
+            stringTemp += `${JSON.stringify(datum[key])}, `
+          } else {
+            stringTemp += `${JSON.stringify(datum[key])});`
+          }
+        })
+        stringQuery.push(stringTemp)
+        stringQuery.push('')
+      })
+    })
+
+
+
     return stringQuery
   }
 
@@ -30,6 +57,10 @@ class PhysicalCassandra {
   setTables(tables) {
     this.tables = tables
   }
+
+  getIdxTableByLabel(label) {
+    return this.tables.findIndex(table => table.label === label);
+  }
 }
 
 class Table {
@@ -38,6 +69,7 @@ class Table {
     this.keys = keys
     this.columns = columns || []
     this.comments = []
+    this.data = []
   }
 
   setLabel(label) {
@@ -59,10 +91,14 @@ class Table {
   setComments(comments) {
     this.comments = comments
   }
+
+  setData(data) {
+    this.data = data
+  }
 }
 
 class Column {
-  constructor(label, dataType) {
+  constructor(label, dataType, data) {
     this.label = label
     this.dataType = dataType
   }

@@ -203,6 +203,7 @@ class Relationship extends EntityRelation {
   
     if (columnFamily1.isFromRelationship) {
       newColumnFamily = clone(columnFamily1)
+      newColumnFamily.relationshipType = relationDetail.type
     }
     else {
       const preexistentColumnFamily = logicalCF.find(o => o.id === columnFamily1.id);
