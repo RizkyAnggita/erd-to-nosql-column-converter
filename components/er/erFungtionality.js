@@ -169,6 +169,7 @@ const convertToERModel = (ername) => {
     else if (["TriangleDown", "Diamond", "DoubleDiamond"].includes(ER.figure)) {
       const newRelationship = new Relationship(ERModelName, ER.text)
       newRelationship.id = ER.key
+      newRelationship.identificator = ER.identificator
 
       if (ER.figure == "TriangleDown") newRelationship.type = "SpecialConnector"
       else if (ER.figure == "Diamond") newRelationship.type = "Relationship"

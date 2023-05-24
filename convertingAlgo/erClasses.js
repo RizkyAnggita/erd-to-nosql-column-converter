@@ -77,6 +77,7 @@ class EntityRelation {
   
       columnFamily.id = entityRelation.getId()
       columnFamily.label = entityRelation.getLabel()
+      columnFamily.attrNameInRelational = entityRelation.identificator
       const attributes = [...entityRelation.defineKey(entityRelation, columnFamilySet, columnFamily)];
       columnFamily.attributes = mergeArray(attributes, columnFamily.attributes || [])
       
@@ -235,6 +236,7 @@ class Relationship extends EntityRelation {
     let interAttribute = {};
     if (relationDetail.type !== 'BinaryManyToMany') {
       interAttribute.label = columnFamily1.label
+      interAttribute.attrNameInRelational = columnFamily1.attrNameInRelational
       interAttribute.artificialID = artificialID;
       interAttribute.type = "Intermediary";
       columnFamily2.attributes.push(interAttribute)

@@ -42,6 +42,11 @@ class LogicalModel {
           }
           column.setLabel(removeNewLine(attr.label))
           column.setDataType(dataType.toUpperCase())
+          
+          if (attr.attrNameInRelational) {
+            column.setAttrNameInRelational(attr.attrNameInRelational)
+          }
+          
           if (['Key', 'Auxiliary'].includes(attr.type)) {
             cfKeys.push(removeNewLine(attr.label))
           }

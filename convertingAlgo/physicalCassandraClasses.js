@@ -110,4 +110,8 @@ class Column {
   setDataType(dataType) {
     this.dataType = dataType
   }
+
+  setAttrNameInRelational(name) {
+    this.attrNameInRelational = name
+  }
 }

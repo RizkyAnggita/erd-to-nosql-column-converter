@@ -99,7 +99,7 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
     if (!cf.isFromRelationship || cf.relationshipType === "BinaryManyToMany") {
       var relationName = cf.label
       if (cf.relationshipType == "BinaryManyToMany") {
-        relationName = cf.label.split("_")[0]
+        relationName = cf.attrNameInRelational
       }
       var xhttp = new XMLHttpRequest(); 
       xhttp.onreadystatechange = function() {
@@ -107,7 +107,25 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
             const temp = xhttp.responseText;            
             const idxTable = tablesNoData.findIndex(tablet => tablet.label === cf.label)
             tablesNoData[idxTable].data = JSON.parse(JSON.parse(temp))
-
+            const attributeLabels = tablesNoData[idxTable].columns.map(prop => [prop.label, prop.attrNameInRelational])
+            
+            const mapping = new Map()
+            attributeLabels.forEach((labels) => {
+              if (labels[1]) {
+                mapping.set(labels[1], labels[0])  
+              }
+              
+            })
+            
+            tablesNoData[idxTable].data.forEach((datum) => {
+              for (const col in datum) {
+                if (mapping.has(col)) {
+                  datum[mapping.get(col)] = datum[col]
+                  delete datum[col]
+                }
+              }
+            })
+            
           }
       };
       xhttp.open("GET", 'http://localhost:8080/extract/'+relationName, false);
@@ -144,10 +162,12 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
         if (attr.type === 'Auxiliary') {
           // kita extract dari yg dirujuknya
           const tableReferred = attr.label
-          const artificialIDReferred = attr.artificialID;
-          const idxCurrTable = tablesNoData.findIndex(tablet => tablet.label === cf.label)
           const idxTableReferred = tablesNoData.findIndex(tablet => tablet.label === tableReferred)
           const idxCF = columnFamilies.findIndex(cf => cf.label === tableReferred)
+          
+          const artificialIDReferred = attr.artificialID;
+          const idxCurrTable = tablesNoData.findIndex(tablet => tablet.label === cf.label)
+          
           const sharedKeyCurrName = cf.parentColumnFam.attributes.find(attr => attr.type === 'Key').label
           var referredKeyName = columnFamilies[idxCF].attributes.find(attr => attr.type === 'Key').label
           
@@ -155,8 +175,8 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
           const idxAttrReferred = columnFamilies[idxCF].attributes.findIndex(attr => attr.artificialID === artificialIDReferred)
           const attrReferred = columnFamilies[idxCF].attributes[idxAttrReferred]
 
-          var colNameToCheck = attrReferred.label?.split("_")[0];
-
+          var colNameToCheck = attrReferred.label
+        
           tablesNoData[idxTableReferred].data.forEach((datum) => {
             const tempObj = {}
             tempObj[referredKeyName] = datum[referredKeyName]
@@ -232,9 +252,10 @@ const convertData = (physicalCassandra) => {
 
 const convertToDDLCQL = () => {
   document.getElementById("ddl-section").style.display = "block"
+  console.log(JSON.parse(JSON.stringify(logicalModel)))
   const physicalCassandra = logicalModel.logicalToPhysicalCassandra(logicalModel)
 
-  console.log(physicalCassandra)
+  console.log(JSON.parse(JSON.stringify(physicalCassandra)))
 
   extractData(logicalModel.columnFamilies, physicalCassandra);
 
