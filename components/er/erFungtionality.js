@@ -81,6 +81,7 @@ const popupBackground = document.getElementById('popupBackground');
 const popupForm = document.getElementById('popupForm');
 const cancelFormButton = document.getElementById("cancelFormButton");
 const submitFormButton = document.getElementById('submitFormButton');
+var params = {}
 
 // Add click event listener to open form button
 extractERFromRDButton.addEventListener('click', function() {
@@ -99,7 +100,7 @@ cancelFormButton.addEventListener("click", () => {
 });
 
 submitFormButton.addEventListener('click', function() {
-  const params = {
+  params = {
     username: document.getElementById('username').value,
     password: document.getElementById('password').value,
     dbName: document.getElementById('dbName').value,

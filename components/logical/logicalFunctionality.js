@@ -143,8 +143,11 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
             
           }
       };
-      xhttp.open("GET", 'http://localhost:8080/extract/'+relationName, false);
-      xhttp.send();
+
+      params.relationName = relationName
+      xhttp.open("POST", 'http://localhost:8080/extract', false);
+      xhttp.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+      xhttp.send(JSON.stringify(params));
 
 
     } else {
@@ -263,9 +266,10 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
               }  
             }
         };
-        xhttp.open("GET", 'http://localhost:8080/extract/'+attr.label, false);
-        xhttp.send();
-
+        params.relationName = attr.label
+        xhttp.open("POST", 'http://localhost:8080/extract', false);
+        xhttp.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        xhttp.send(JSON.stringify(params));
       } 
     }
   }
@@ -280,14 +284,12 @@ const extractData = (columnFamilies, physicalCassandra) => {
 }
 
 const convertData = (physicalCassandra) => {
-  console.log("KAIDEU: ", physicalCassandra.tables)
   physicalCassandra.tables.forEach((table) => {
     table.columns.forEach((col) => {
       const currAttr = col.label
       // var isDataEmpty = false;
       table.data.forEach((datum) => {
         var convertDatum = datum[currAttr]
-        console.log("EMANG INI APA: ", convertDatum)
         if (convertDatum) {
           switch (col.dataType) {
             case "SMALLINT":
@@ -305,9 +307,7 @@ const convertData = (physicalCassandra) => {
               
           }
           datum[currAttr] = convertDatum
-        } //else {
-          // console.log("MASUK SINI: ", datum)
-        // }
+        }
       })
     })
   })
