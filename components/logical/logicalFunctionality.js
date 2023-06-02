@@ -302,7 +302,6 @@ const convertData = (physicalCassandra) => {
               convertDatum = parseFloat(convertDatum)
               break;
             default:
-              console.log("KESINI MASUK: ", col.dataType)
               break;
               
           }
@@ -323,8 +322,7 @@ const convertToDDLCQL = () => {
 
   extractData(logicalModel.columnFamilies, physicalCassandra);
 
-  convertData(physicalCassandra)
-  console.log("AFTER CONVERT DATA: ", physicalCassandra)
+  convertData(physicalCassandra)  
 
   const stringQuery = physicalCassandra.createDDL()
   const joinedQuery = createKeyspace(ername.value) +  stringQuery.join('\n')
