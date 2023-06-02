@@ -44,6 +44,22 @@ const createTableInputAttribute = (columnFamilies) => {
   let data = ''
 
   columnFamilies.forEach((cf) => {
+    cf.attributes?.forEach((attr) => {
+      if (attr.type === 'Auxiliary') {
+        const idxCFReferred = columnFamilies.findIndex(cf => cf.label === attr.label)
+        const idxKeyAttrReferred = columnFamilies[idxCFReferred].attributes.findIndex(attr => attr.type === 'Key')
+        const idxAttrReferred = columnFamilies[idxCFReferred].attributes.findIndex(att => att.artificialID === attr.artificialID)
+        const idxKeyAttr = cf.parentColumnFam.attributes.findIndex(attr => attr.type === 'Key')
+  
+        attr.dataType = columnFamilies[idxCFReferred].attributes[idxKeyAttrReferred].dataType
+        if (columnFamilies[idxCFReferred].attributes[idxAttrReferred] !== undefined) {
+          columnFamilies[idxCFReferred].attributes[idxAttrReferred].dataType = cf.parentColumnFam.attributes[idxKeyAttr].dataType
+        }
+      }
+    })
+  })
+
+  columnFamilies.forEach((cf) => {
     data += createTableInput(cf)
   })
 
@@ -264,12 +280,14 @@ const extractData = (columnFamilies, physicalCassandra) => {
 }
 
 const convertData = (physicalCassandra) => {
+  console.log("KAIDEU: ", physicalCassandra.tables)
   physicalCassandra.tables.forEach((table) => {
     table.columns.forEach((col) => {
       const currAttr = col.label
       // var isDataEmpty = false;
       table.data.forEach((datum) => {
         var convertDatum = datum[currAttr]
+        console.log("EMANG INI APA: ", convertDatum)
         if (convertDatum) {
           switch (col.dataType) {
             case "SMALLINT":
@@ -282,11 +300,14 @@ const convertData = (physicalCassandra) => {
               convertDatum = parseFloat(convertDatum)
               break;
             default:
+              console.log("KESINI MASUK: ", col.dataType)
               break;
               
           }
           datum[currAttr] = convertDatum
-        }
+        } //else {
+          // console.log("MASUK SINI: ", datum)
+        // }
       })
     })
   })
@@ -295,6 +316,7 @@ const convertData = (physicalCassandra) => {
 const convertToDDLCQL = () => {
   document.getElementById("ddl-section").style.display = "block"
   console.log(JSON.parse(JSON.stringify(logicalModel)))
+
   const physicalCassandra = logicalModel.logicalToPhysicalCassandra(logicalModel)
 
   console.log(JSON.parse(JSON.stringify(physicalCassandra)))
