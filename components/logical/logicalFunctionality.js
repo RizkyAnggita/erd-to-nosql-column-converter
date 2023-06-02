@@ -87,7 +87,6 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
     
     for (const attr of cf.attributes) {
       if (attr.type === "Auxiliary") {
-        console.log("AUX: ", attr.label);
         if (!visitedCF.has(attr.label)) {
           const idxCFAux = columnFamilies.findIndex(cf => cf.label === attr.label)
           const CFAux = columnFamilies[idxCFAux]
@@ -200,7 +199,6 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
                 const tempObj = {};
                 tempObj[sharedKeyCurrName] = dataCurr[i][sharedKeyCurrName]
                 tempObj[attr.label] = tempArr[j][referredKeyName]
-                console.log("INSIDE: ", tempObj)
                 newDataCurr.push(tempObj)
               }
             }
@@ -209,6 +207,50 @@ const insideExtractData = (cf, columnFamilies, tablesNoData) => {
           tablesNoData[idxCurrTable].data = newDataCurr
         }
       })
+    }
+
+    for (const attr of cf.attributes) {
+      if (attr.type === 'Multivalued') {
+        
+        var xhttp = new XMLHttpRequest(); 
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && this.status == 200) {
+              const temp = xhttp.responseText;            
+              const dataParsed = JSON.parse(JSON.parse(temp))
+
+              const idxTable = tablesNoData.findIndex(tablet => tablet.label === cf.label)
+              const colKeys = tablesNoData[idxTable].keys.split(",")
+              const objProps = Object.keys(dataParsed[0])
+
+              var keyMatch = ""
+              colKeys.forEach((key) => {
+                objProps.forEach((prop) => {
+                  if (prop === key) {
+                    keyMatch = key
+                  }
+                })
+              })
+
+              const colToExtract = objProps.filter(item => item !== keyMatch)
+              const dataCurr = tablesNoData[idxTable].data
+              const lenDataCurr = dataCurr.length
+              const lenDataReferred = dataParsed.length
+
+              for (let i = 0; i < lenDataCurr; i++) {
+                const tempArr = [];
+                for (let j = 0; j < lenDataReferred; j++) {
+                  if (dataCurr[i][keyMatch] == dataParsed[j][keyMatch]) {
+                    tempArr.push(dataParsed[j][colToExtract])
+                  }
+                }
+                dataCurr[i][attr.label] = tempArr
+              }  
+            }
+        };
+        xhttp.open("GET", 'http://localhost:8080/extract/'+attr.label, false);
+        xhttp.send();
+
+      } 
     }
   }
 }
